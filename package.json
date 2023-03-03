@@ -9,7 +9,7 @@
     "start:mon": "cross-env DEBUG=W6* PORT=4500 nodemon ./dist/index.js",
     "build": "tsc -w",
     "test": "jest --watchAll --coverage",
-    "test:prod": "jest --watchAll --coverage --watchAll=false --passWithNoTest"
+    "test:prod": "jest --watchAll --coverage --watchAll=false --passWithNoTests"
   },
   "keywords": [
     "Node",
@@ -42,13 +42,11 @@
     "@types/mongoose": "^5.11.97",
     "@types/morgan": "^1.9.4",
     "bcryptjs": "^2.4.3",
-    "commander": "^10.0.0",
     "cors": "^2.8.5",
     "cross-env": "^7.0.3",
     "debug": "^4.3.4",
     "dotenv": "^16.0.3",
     "express": "^4.18.2",
-    "inquirer": "^9.1.4",
     "jest-ts-webcompat-resolver": "^1.0.0",
     "jsonwebtoken": "^9.0.0",
     "mongoose": "^7.0.0",
