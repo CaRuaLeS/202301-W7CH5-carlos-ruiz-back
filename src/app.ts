@@ -25,6 +25,7 @@ app.get('/', (_req, resp) => {
 });
 
 app.use(
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   (error: CustomError, _req: Request, resp: Response, _next: NextFunction) => {
     debug('Middleware de errores');
     const status = error.statusCode || 500;
