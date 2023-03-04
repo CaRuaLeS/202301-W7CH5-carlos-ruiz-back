@@ -18,7 +18,10 @@ export class UserMongoRepo implements Repo<User> {
 
   async query(): Promise<User[]> {
     debug('query');
-    const data = await UserModel.find().populate('things', { owner: 0 });
+    const data = await UserModel.find().populate(['friends', 'enmeies'], {
+      friends: 0,
+      enemies: 0,
+    });
     return data;
   }
 
