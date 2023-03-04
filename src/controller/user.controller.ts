@@ -1,12 +1,12 @@
 import { Response, Request, NextFunction } from 'express';
 import { User } from '../entities/user';
-import { Repo } from '../repository/repo.interface';
+import { Repo } from '../repository/repo.interface.js';
 import createDebug from 'debug';
-import { HTTPError } from '../errors/errors';
-import { Auth } from '../services/auth';
-import { PayloadToken } from '../services/payloadToken';
-import { RequestPlus } from '../services/requestPlus';
-const debug = createDebug('RS:controller');
+import { HTTPError } from '../errors/errors.js';
+import { Auth } from '../services/auth.js';
+import { PayloadToken } from '../services/token-info';
+import { RequestPlus } from '../services/request-plus';
+const debug = createDebug('RS:App:controller');
 
 export class UserController {
   constructor(public repo: Repo<User>) {
@@ -17,7 +17,7 @@ export class UserController {
     try {
       if (!req.body.email || !req.body.password)
         throw new HTTPError(401, 'Unauthorized', 'Invalid Email or password');
-      req.body.passwd = await Auth.hash(req.body.password);
+      req.body.password = await Auth.hash(req.body.password);
       req.body.friends = [];
       req.body.enemies = [];
       const data = await this.repo.create(req.body);
@@ -84,12 +84,36 @@ export class UserController {
   async addFriend(req: RequestPlus, resp: Response, next: NextFunction) {
     try {
       debug('add friend');
-      const userId = req.dataPlus?.id;
+      const userId = req.info?.id;
+      debug(req.info?.id, req.params.id);
       if (!userId) throw new HTTPError(404, 'Not found', 'Not found user id');
       const actualUser = await this.repo.queryId(userId); // Repo throw error if not found
       const data = await this.repo.queryId(req.params.id);
       if (!data) throw new HTTPError(404, 'Not found', 'Not found params id');
       actualUser.friends.push(data);
+      this.repo.update(actualUser);
+      resp.json({
+        results: [actualUser],
+      });
+    } catch (error) {
+      next(error);
+    }
+  }
+
+  async removeFriends(req: RequestPlus, resp: Response, next: NextFunction) {
+    try {
+      debug('removeFriend');
+      const userId = req.info?.id;
+      if (!userId) throw new HTTPError(404, 'Not found', 'Not found user ID');
+      const actualUser = await this.repo.queryId(userId);
+
+      const friendUser = await this.repo.queryId(req.params.id);
+      if (!friendUser)
+        throw new HTTPError(404, 'Not found', 'Not found user ID');
+      actualUser.friends = actualUser.friends.filter(
+        (item) => item.id !== friendUser.id
+      );
+
       this.repo.update(actualUser);
       resp.json({
         results: [actualUser],

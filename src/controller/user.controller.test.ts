@@ -1,11 +1,11 @@
 import { UserMongoRepo } from '../repository/user.mongo.repo';
 import { Response } from 'express';
-import { RequestPlus } from '../services/requestPlus';
 import { UserController } from './user.controller';
 import { Auth } from '../services/auth';
 import { Repo } from '../repository/repo.interface';
 import { User } from '../entities/user';
-import { PayloadToken } from '../services/payloadToken';
+import { PayloadToken } from '../services/token-info';
+import { RequestPlus } from '../services/request-plus';
 
 describe('Given the register constroller', () => {
   // Arrange
@@ -149,43 +149,82 @@ describe('Given the rest of the user controller functions', () => {
     });
   });
   describe('When the addFriend in called', () => {
-    test('Then it should be instance', async () => {
+    test('Then if all is OK it return resp.json', async () => {
       const req = {
-        dataPlus: {
+        info: {
           id: 'asdk',
-        } as unknown as PayloadToken,
+        },
         body: {},
         params: {
           id: '12345',
         },
       } as unknown as RequestPlus;
-      (repo.queryId as jest.Mock).mockResolvedValue({ friends: [] });
+      (repo.queryId as jest.Mock).mockResolvedValue({
+        friends: [{ id: '11' }],
+        id: '01',
+      });
+
       await controller.addFriend(req, resp, next);
-      expect(repo.queryId).toHaveBeenCalled();
       expect(resp.json).toHaveBeenCalled();
     });
     test('Then with no userId it should throw error', async () => {
       const req = {
-        dataPlus: null as unknown as PayloadToken,
+        info: { id: null },
         body: {},
         params: {
           id: '1234',
         },
       } as unknown as RequestPlus;
-      (repo.queryId as jest.Mock).mockRejectedValue(new Error());
       await controller.addFriend(req, resp, next);
-      expect(repo.queryId).toHaveBeenCalled();
       expect(next).toHaveBeenCalled();
     });
     test('Then with no params id it should throw an error', async () => {
       const req = {
-        dataPlus: '12345' as unknown as PayloadToken,
+        info: { id: 1 },
         body: {},
-        params: {},
+        params: { id: 1 },
       } as unknown as RequestPlus;
-      (repo.queryId as jest.Mock).mockRejectedValue(new Error());
+      (repo.queryId as jest.Mock).mockResolvedValue(undefined);
+
       await controller.addFriend(req, resp, next);
-      expect(repo.queryId).toHaveBeenCalled();
+      expect(next).toHaveBeenCalled();
+    });
+  });
+
+  describe('When the removeFriend in called', () => {
+    test('Then if al OK it should all  pass', async () => {
+      const req = {
+        info: {
+          id: 'asdk',
+        },
+        body: {},
+        params: {
+          id: '12345',
+        },
+      } as unknown as RequestPlus;
+      (repo.queryId as jest.Mock).mockResolvedValue({
+        friends: [{ id: '11' }, { id: '10' }],
+        id: '01',
+      });
+
+      await controller.removeFriends(req, resp, next);
+      expect(resp.json).toHaveBeenCalled();
+    });
+    test('Then with no userId it should throw error', async () => {
+      const req = {
+        info: { id: undefined },
+      } as unknown as RequestPlus;
+      await controller.removeFriends(req, resp, next);
+      expect(next).toHaveBeenCalled();
+    });
+    test('Then with no params id it should throw an error', async () => {
+      const req = {
+        info: { id: 1 },
+        params: { id: 1 },
+      } as unknown as RequestPlus;
+      (repo.queryId as jest.Mock).mockResolvedValue(undefined);
+
+      await controller.removeFriends(req, resp, next);
       expect(next).toHaveBeenCalled();
     });
   });
