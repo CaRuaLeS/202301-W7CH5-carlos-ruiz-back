@@ -2,7 +2,7 @@ import { User } from '../entities/user';
 import { Repo } from './repo.interface';
 import createDebug from 'debug';
 import { UserModel } from './user.mongo.model.js';
-import { HTTPError } from '../errors/errors';
+import { HTTPError } from '../errors/errors.js';
 const debug = createDebug('RS:App:RepUser');
 
 export class UserMongoRepo implements Repo<User> {
