@@ -1,6 +1,6 @@
-import { PayloadToken } from './payloadToken';
+import { PayloadToken } from './token-info';
 import { Request } from 'express';
 
 export interface RequestPlus extends Request {
-  dataPlus?: PayloadToken;
+  info?: PayloadToken;
 }
