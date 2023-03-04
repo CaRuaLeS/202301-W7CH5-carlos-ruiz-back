@@ -27,7 +27,7 @@ export class UserMongoRepo implements Repo<User> {
 
   async queryId(id: string): Promise<User> {
     debug('queryId');
-    const data = await UserModel.findById(id);
+    const data = await UserModel.findById(id).populate(['friends', 'enmeies']);
     if (!data) throw new HTTPError(404, 'Not found', 'Id not found in queryId');
     return data;
   }

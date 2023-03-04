@@ -27,22 +27,24 @@ describe('Given UserMongoRepo', () => {
   describe('When you use queryId()', () => {
     test('Then it should return the data', async () => {
       // Arrange
-      (UserModel.findById as jest.Mock).mockResolvedValue({ id: '1' });
+      (UserModel.findById as jest.Mock).mockImplementation(() => ({
+        populate: jest.fn().mockResolvedValue([]),
+      }));
       // Act
       const id = '1';
       const result = await repo.queryId(id);
       // Assert
       expect(UserModel.findById).toHaveBeenCalled();
-      expect(result).toEqual({ id: '1' });
+      expect(result).toEqual([]);
     });
     test('Then should throw an error', () => {
       // Arrange
-      (UserModel.findById as jest.Mock).mockResolvedValue(undefined);
+      (UserModel.findById as jest.Mock).mockImplementation(() => ({
+        populate: jest.fn().mockResolvedValue(null),
+      }));
       // Act
-      const id = '1';
       // Assert
-      expect(async () => repo.queryId(id)).rejects.toThrow();
-      expect(UserModel.findById).toHaveBeenCalled();
+      expect(async () => repo.queryId('')).rejects.toThrow();
     });
   });
   describe('When you use create()', () => {
