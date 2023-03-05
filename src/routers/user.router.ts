@@ -20,4 +20,15 @@ usersRouter.patch(
   logged,
   controller.addFriend.bind(controller)
 );
+usersRouter.patch(
+  '/remove_enemy/:id',
+  logged,
+  controller.removeEnemy.bind(controller)
+);
+usersRouter.patch(
+  '/add_enemy/:id',
+  logged,
+  controller.addEnemy.bind(controller)
+);
+
 usersRouter.get('/', logged, controller.getAll.bind(controller));
