@@ -1,3 +1,4 @@
+/* eslint-disable max-nested-callbacks */
 import { UserModel } from './user.mongo.model';
 import { UserMongoRepo } from './user.mongo.repo';
 
@@ -15,34 +16,44 @@ describe('Given UserMongoRepo', () => {
 
   describe('When i use query', () => {
     test('Then should return the data', async () => {
+      const mockPopulate = [{ id: '1' }, { id: '2' }];
       (UserModel.find as jest.Mock).mockImplementation(() => ({
-        populate: jest.fn().mockResolvedValue([]),
+        populate: jest.fn().mockImplementation(() => ({
+          populate: jest.fn().mockResolvedValue(mockPopulate),
+        })),
       }));
       const result = await repo.query();
 
       expect(UserModel.find).toHaveBeenCalled();
-      expect(result).toEqual([]);
+      expect(result).toEqual([{ id: '1' }, { id: '2' }]);
     });
   });
   describe('When you use queryId()', () => {
     test('Then it should return the data', async () => {
       // Arrange
-      (UserModel.findById as jest.Mock).mockResolvedValue({ id: '1' });
+      const mockPopulate = [{ id: '1' }];
+      (UserModel.findById as jest.Mock).mockImplementation(() => ({
+        populate: jest.fn().mockImplementation(() => ({
+          populate: jest.fn().mockResolvedValue(mockPopulate),
+        })),
+      }));
       // Act
       const id = '1';
       const result = await repo.queryId(id);
       // Assert
       expect(UserModel.findById).toHaveBeenCalled();
-      expect(result).toEqual({ id: '1' });
+      expect(result).toEqual([{ id: '1' }]);
     });
     test('Then should throw an error', () => {
       // Arrange
-      (UserModel.findById as jest.Mock).mockResolvedValue(undefined);
+      (UserModel.findById as jest.Mock).mockImplementation(() => ({
+        populate: jest.fn().mockImplementation(() => ({
+          populate: jest.fn().mockResolvedValue(null),
+        })),
+      }));
       // Act
-      const id = '1';
       // Assert
-      expect(async () => repo.queryId(id)).rejects.toThrow();
-      expect(UserModel.findById).toHaveBeenCalled();
+      expect(async () => repo.queryId('')).rejects.toThrow();
     });
   });
   describe('When you use create()', () => {
@@ -58,48 +69,48 @@ describe('Given UserMongoRepo', () => {
       expect(result).toEqual({ id: resultId });
     });
   });
-  describe('When you use update()', () => {
-    test('Then it should return the data', async () => {
-      // Arrange
-      const mockNewItem = { id: '1', test: 3 };
-      (UserModel.findByIdAndUpdate as jest.Mock).mockResolvedValue({
-        id: '1',
-        test: 3,
-      });
-      // Act
-      const result = await repo.update(mockNewItem);
-      // Assert
-      expect(UserModel.findByIdAndUpdate).toHaveBeenCalled();
-      expect(result).toEqual({ id: '1', test: 3 });
-    });
-    test('Then should throw an error', () => {
-      // Arrange
-      (UserModel.findByIdAndUpdate as jest.Mock).mockResolvedValue(undefined);
-      // Act
-      const mockNewItem = { id: '1', test: 3 };
 
-      // Assert
-      expect(async () => repo.update(mockNewItem)).rejects.toThrow();
-      expect(UserModel.findByIdAndUpdate).toHaveBeenCalled();
-    });
-  });
   describe('When i use search', () => {
-    test('Then it should return what i serched for', async () => {
-      (UserModel.find as jest.Mock).mockResolvedValue([
-        {
-          key: 'some',
-          value: 'fruit',
-        },
-      ]);
+    test('Then it should return what i searched for', async () => {
+      const mockPopulate = [{ id: '1' }];
+      (UserModel.find as jest.Mock).mockImplementation(() => ({
+        populate: jest.fn().mockImplementation(() => ({
+          populate: jest.fn().mockResolvedValue(mockPopulate),
+        })),
+      }));
 
       const result = await repo.search({ key: 'some', value: 'oso' });
       expect(UserModel.find).toHaveBeenCalled();
-      expect(result).toEqual([
-        {
-          key: 'some',
-          value: 'fruit',
-        },
-      ]);
+      expect(result).toEqual([{ id: '1' }]);
+    });
+  });
+
+  describe('When you use update()', () => {
+    const mockNewUser = { email: '12345' };
+    test('Then it should return the data', async () => {
+      // Arrange
+      const mockPopulate = [{ id: '1' }];
+      (UserModel.findByIdAndUpdate as jest.Mock).mockImplementation(() => ({
+        populate: jest.fn().mockImplementation(() => ({
+          populate: jest.fn().mockResolvedValue(mockPopulate),
+        })),
+      }));
+      // Act
+      const result = await repo.update(mockNewUser);
+      // Assert
+      expect(UserModel.findByIdAndUpdate).toHaveBeenCalled();
+      expect(result).toEqual([{ id: '1' }]);
+    });
+    test('Then should throw an error', () => {
+      // Arrange
+      (UserModel.findByIdAndUpdate as jest.Mock).mockImplementation(() => ({
+        populate: jest.fn().mockImplementation(() => ({
+          populate: jest.fn().mockResolvedValue(null),
+        })),
+      }));
+      // Act
+      // Assert
+      expect(async () => repo.update(mockNewUser)).rejects.toThrow();
     });
   });
 });

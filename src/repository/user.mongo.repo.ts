@@ -2,7 +2,7 @@ import { User } from '../entities/user';
 import { Repo } from './repo.interface';
 import createDebug from 'debug';
 import { UserModel } from './user.mongo.model.js';
-import { HTTPError } from '../errors/errors';
+import { HTTPError } from '../errors/errors.js';
 const debug = createDebug('RS:App:RepUser');
 
 export class UserMongoRepo implements Repo<User> {
@@ -18,13 +18,23 @@ export class UserMongoRepo implements Repo<User> {
 
   async query(): Promise<User[]> {
     debug('query');
-    const data = await UserModel.find().populate('things', { owner: 0 });
+    const data = await UserModel.find()
+      .populate('friends', {
+        friends: 0,
+        enemies: 0,
+      })
+      .populate('enemies', { friends: 0, enemies: 0 });
     return data;
   }
 
   async queryId(id: string): Promise<User> {
     debug('queryId');
-    const data = await UserModel.findById(id);
+    const data = await UserModel.findById(id)
+      .populate('friends', {
+        friends: 0,
+        enemies: 0,
+      })
+      .populate('enemies', { friends: 0, enemies: 0 });
     if (!data) throw new HTTPError(404, 'Not found', 'Id not found in queryId');
     return data;
   }
@@ -37,7 +47,12 @@ export class UserMongoRepo implements Repo<User> {
 
   async search(query: { key: string; value: unknown }): Promise<User[]> {
     debug('update');
-    const data = await UserModel.find({ [query.key]: query.value });
+    const data = await UserModel.find({ [query.key]: query.value })
+      .populate('friends', {
+        friends: 0,
+        enemies: 0,
+      })
+      .populate('enemies', { friends: 0, enemies: 0 });
     return data;
   }
 
@@ -45,7 +60,12 @@ export class UserMongoRepo implements Repo<User> {
     debug('update');
     const data = await UserModel.findByIdAndUpdate(info.id, info, {
       new: true,
-    });
+    })
+      .populate('friends', {
+        friends: 0,
+        enemies: 0,
+      })
+      .populate('enemies', { friends: 0, enemies: 0 });
     if (!data) throw new HTTPError(404, 'Not found', 'Id not found in update');
     return data;
   }

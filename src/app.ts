@@ -2,7 +2,8 @@ import express, { NextFunction, Request, Response } from 'express';
 import createDebug from 'debug';
 import morgan from 'morgan';
 import cors from 'cors';
-import { CustomError } from './errors/errors';
+import { CustomError } from './errors/errors.js';
+import { usersRouter } from './routers/user.router.js';
 
 const debug = createDebug('RS:App');
 export const app = express();
@@ -16,7 +17,8 @@ app.use(express.json());
 app.use(cors(corsOptions));
 
 // App different paths
-
+app.use('/users', usersRouter);
+// App general path
 app.get('/', (_req, resp) => {
   resp.json({
     info: 'Main',
