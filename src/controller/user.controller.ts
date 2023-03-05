@@ -102,16 +102,60 @@ export class UserController {
 
   async removeFriends(req: RequestPlus, resp: Response, next: NextFunction) {
     try {
-      debug('removeFriend');
+      debug('remove friend');
       const userId = req.info?.id;
       if (!userId) throw new HTTPError(404, 'Not found', 'Not found user ID');
       const actualUser = await this.repo.queryId(userId);
-
       const friendUser = await this.repo.queryId(req.params.id);
       if (!friendUser)
-        throw new HTTPError(404, 'Not found', 'Not found user ID');
+        throw new HTTPError(404, 'Not found', 'Not found params ID');
+      if (!actualUser.friends.some((item) => item.id === friendUser.id))
+        throw new HTTPError(404, 'Not found', 'Id not found in friend list');
       actualUser.friends = actualUser.friends.filter(
         (item) => item.id !== friendUser.id
+      );
+
+      this.repo.update(actualUser);
+      resp.json({
+        results: [actualUser],
+      });
+    } catch (error) {
+      next(error);
+    }
+  }
+
+  async addEnemy(req: RequestPlus, resp: Response, next: NextFunction) {
+    try {
+      debug('add enemy');
+      const userId = req.info?.id;
+      debug(req.info?.id, req.params.id);
+      if (!userId) throw new HTTPError(404, 'Not found', 'Not found user id');
+      const actualUser = await this.repo.queryId(userId); // Repo throw error if not found
+      const data = await this.repo.queryId(req.params.id);
+      if (!data) throw new HTTPError(404, 'Not found', 'Not found params id');
+      actualUser.enemies.push(data);
+      this.repo.update(actualUser);
+      resp.json({
+        results: [actualUser],
+      });
+    } catch (error) {
+      next(error);
+    }
+  }
+
+  async removeEnemy(req: RequestPlus, resp: Response, next: NextFunction) {
+    try {
+      debug('remove enemy');
+      const userId = req.info?.id;
+      if (!userId) throw new HTTPError(404, 'Not found', 'Not found user ID');
+      const actualUser = await this.repo.queryId(userId);
+      const enemyUser = await this.repo.queryId(req.params.id);
+      if (!enemyUser)
+        throw new HTTPError(404, 'Not found', 'Not found params ID');
+      if (!actualUser.enemies.some((item) => item.id === enemyUser.id))
+        throw new HTTPError(404, 'Not found', 'Id not found in enemy list');
+      actualUser.enemies = actualUser.enemies.filter(
+        (item) => item.id !== enemyUser.id
       );
 
       this.repo.update(actualUser);

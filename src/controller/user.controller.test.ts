@@ -197,20 +197,38 @@ describe('Given the rest of the user controller functions', () => {
     test('Then if al OK it should all  pass', async () => {
       const req = {
         info: {
-          id: 'asdk',
+          id: '1',
         },
         body: {},
         params: {
-          id: '12345',
+          id: '2',
         },
       } as unknown as RequestPlus;
       (repo.queryId as jest.Mock).mockResolvedValue({
-        friends: [{ id: '11' }, { id: '10' }],
-        id: '01',
+        id: '1',
+        friends: [{ id: '4' }, { id: '3' }],
       });
 
       await controller.removeFriends(req, resp, next);
       expect(resp.json).toHaveBeenCalled();
+    });
+    test('Then if param id is not on the friends list', async () => {
+      const req = {
+        info: {
+          id: '1',
+        },
+        body: {},
+        params: {
+          id: '5',
+        },
+      } as unknown as RequestPlus;
+      (repo.queryId as jest.Mock).mockResolvedValue({
+        id: '2',
+        friends: [{ id: '2' }, { id: '3' }],
+      });
+
+      await controller.removeFriends(req, resp, next);
+      expect(next).toHaveBeenCalled();
     });
     test('Then with no userId it should throw error', async () => {
       const req = {
@@ -227,6 +245,105 @@ describe('Given the rest of the user controller functions', () => {
       (repo.queryId as jest.Mock).mockResolvedValue(undefined);
 
       await controller.removeFriends(req, resp, next);
+      expect(next).toHaveBeenCalled();
+    });
+  });
+
+  describe('When the addEnemy in called', () => {
+    test('Then if all is OK it return resp.json', async () => {
+      const req = {
+        info: {
+          id: 'asdk',
+        },
+        body: {},
+        params: {
+          id: '12345',
+        },
+      } as unknown as RequestPlus;
+      (repo.queryId as jest.Mock).mockResolvedValue({
+        enemies: [{ id: '11' }],
+        id: '01',
+      });
+
+      await controller.addEnemy(req, resp, next);
+      expect(resp.json).toHaveBeenCalled();
+    });
+    test('Then with no userId it should throw error', async () => {
+      const req = {
+        info: { id: null },
+        body: {},
+        params: {
+          id: '1234',
+        },
+      } as unknown as RequestPlus;
+      await controller.addEnemy(req, resp, next);
+      expect(next).toHaveBeenCalled();
+    });
+    test('Then with no params id it should throw an error', async () => {
+      const req = {
+        info: { id: 1 },
+        body: {},
+        params: { id: 1 },
+      } as unknown as RequestPlus;
+      (repo.queryId as jest.Mock).mockResolvedValue(undefined);
+
+      await controller.addEnemy(req, resp, next);
+      expect(next).toHaveBeenCalled();
+    });
+  });
+
+  describe('When the removeEnemy in called', () => {
+    test('Then if al OK it should all  pass', async () => {
+      const req = {
+        info: {
+          id: '1',
+        },
+        body: {},
+        params: {
+          id: '2',
+        },
+      } as unknown as RequestPlus;
+      (repo.queryId as jest.Mock).mockResolvedValue({
+        id: '1',
+        friends: [{ id: '4' }, { id: '3' }],
+      });
+
+      await controller.removeEnemy(req, resp, next);
+      expect(resp.json).toHaveBeenCalled();
+    });
+    test('Then if param id is not on the enemy list', async () => {
+      const req = {
+        info: {
+          id: '1',
+        },
+        body: {},
+        params: {
+          id: '5',
+        },
+      } as unknown as RequestPlus;
+      (repo.queryId as jest.Mock).mockResolvedValue({
+        id: '1',
+        enemies: [{ id: '2' }, { id: '3' }],
+      });
+
+      await controller.removeEnemy(req, resp, next);
+      expect(next).toHaveBeenCalled();
+    });
+    test('Then with no userId it should throw error', async () => {
+      const req = {
+        info: { id: undefined },
+      } as unknown as RequestPlus;
+      await controller.removeEnemy(req, resp, next);
+      expect(next).toHaveBeenCalled();
+    });
+    test('Then with no params id it should throw an error', async () => {
+      const req = {
+        info: { id: 1 },
+        params: { id: 1 },
+      } as unknown as RequestPlus;
+      (repo.queryId as jest.Mock).mockResolvedValue(undefined);
+
+      await controller.removeEnemy(req, resp, next);
       expect(next).toHaveBeenCalled();
     });
   });
