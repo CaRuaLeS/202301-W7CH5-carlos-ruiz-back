@@ -1,13 +1,15 @@
 import { UserMongoRepo } from '../repository/user.mongo.repo';
-import { Response } from 'express';
+import { NextFunction, Response } from 'express';
 import { UserController } from './user.controller';
 import { Auth } from '../services/auth';
 import { Repo } from '../repository/repo.interface';
 import { User } from '../entities/user';
-import { PayloadToken } from '../services/token-info';
 import { RequestPlus } from '../services/request-plus';
 
-describe('Given the register constroller', () => {
+import dotenv from 'dotenv';
+dotenv.config();
+
+describe('Given the register controller', () => {
   // Arrange
 
   const mockRepo = {
@@ -19,7 +21,7 @@ describe('Given the register constroller', () => {
     status: jest.fn(),
     json: jest.fn(),
   } as unknown as Response;
-  const next = jest.fn();
+  const next = jest.fn() as unknown as NextFunction;
 
   const controller = new UserController(mockRepo);
 
@@ -28,7 +30,7 @@ describe('Given the register constroller', () => {
       const req = {
         body: {
           email: 'pepe',
-          password: 'qwerty12345',
+          password: String(process.env.TEST_PASSWORD),
         },
       } as unknown as RequestPlus;
 
@@ -54,7 +56,7 @@ describe('Given the login controller', () => {
   const req = {
     body: {
       email: 'foo',
-      password: 'zxcvasdfqwer',
+      password: String(process.env.TEST_PASSWORD),
     },
   } as unknown as RequestPlus;
   const resp = {
