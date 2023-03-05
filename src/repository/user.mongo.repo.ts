@@ -22,8 +22,9 @@ export class UserMongoRepo implements Repo<User> {
       .populate('friends', {
         friends: 0,
         enemies: 0,
+        password: 0,
       })
-      .populate('enemies', { friends: 0, enemies: 0 });
+      .populate('enemies', { friends: 0, enemies: 0, password: 0 });
     return data;
   }
 
@@ -33,8 +34,9 @@ export class UserMongoRepo implements Repo<User> {
       .populate('friends', {
         friends: 0,
         enemies: 0,
+        password: 0,
       })
-      .populate('enemies', { friends: 0, enemies: 0 });
+      .populate('enemies', { friends: 0, enemies: 0, password: 0 });
     if (!data) throw new HTTPError(404, 'Not found', 'Id not found in queryId');
     return data;
   }
@@ -51,8 +53,9 @@ export class UserMongoRepo implements Repo<User> {
       .populate('friends', {
         friends: 0,
         enemies: 0,
+        password: 0,
       })
-      .populate('enemies', { friends: 0, enemies: 0 });
+      .populate('enemies', { friends: 0, enemies: 0, password: 0 });
     return data;
   }
 
@@ -64,8 +67,9 @@ export class UserMongoRepo implements Repo<User> {
       .populate('friends', {
         friends: 0,
         enemies: 0,
+        password: 0,
       })
-      .populate('enemies', { friends: 0, enemies: 0 });
+      .populate('enemies', { friends: 0, enemies: 0, password: 0 });
     if (!data) throw new HTTPError(404, 'Not found', 'Id not found in update');
     return data;
   }

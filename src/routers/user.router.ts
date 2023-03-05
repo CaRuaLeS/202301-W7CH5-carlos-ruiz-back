@@ -10,9 +10,14 @@ const controller = new UserController(repo);
 usersRouter.post('/register', controller.register.bind(controller));
 usersRouter.post('/login', controller.login.bind(controller));
 
-usersRouter.get('/', logged, controller.getAll.bind(controller));
+usersRouter.patch(
+  '/remove_friend/:id',
+  logged,
+  controller.removeFriends.bind(controller)
+);
 usersRouter.patch(
   '/add_friend/:id',
   logged,
   controller.addFriend.bind(controller)
 );
+usersRouter.get('/', logged, controller.getAll.bind(controller));
