@@ -28,7 +28,7 @@ describe('Given the register constroller', () => {
       const req = {
         body: {
           email: 'pepe',
-          password: 'test',
+          password: 'qwerty12345',
         },
       } as unknown as RequestPlus;
 
@@ -54,7 +54,7 @@ describe('Given the login controller', () => {
   const req = {
     body: {
       email: 'foo',
-      password: 'test',
+      password: 'zxcvasdfqwer',
     },
   } as unknown as RequestPlus;
   const resp = {
