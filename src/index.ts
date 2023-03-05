@@ -2,7 +2,6 @@ import http from 'http';
 import { app } from './app.js';
 import createDebug from 'debug';
 import { dbConnect } from './db/db.connect.js';
-import mongoose from 'mongoose';
 
 const debug = createDebug('RS');
 
