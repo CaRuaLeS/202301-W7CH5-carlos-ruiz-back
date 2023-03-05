@@ -18,7 +18,7 @@ app.use(cors(corsOptions));
 
 // App different paths
 app.use('/users', usersRouter);
-
+// App general path
 app.get('/', (_req, resp) => {
   resp.json({
     info: 'Main',
