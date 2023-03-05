@@ -4,7 +4,7 @@ import { config } from '../config.js';
 import { HTTPError } from '../errors/errors.js';
 import createDebug from 'debug';
 import { PayloadToken } from './token-info.js';
-const debug = createDebug('W6:services:auth');
+const debug = createDebug('RS:auth');
 
 debug('Loaded');
 
