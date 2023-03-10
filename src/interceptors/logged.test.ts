@@ -3,7 +3,6 @@ import { logged, RequestPlus } from './logged';
 
 jest.mock('../services/auth.js');
 jest.mock('../config.js', () => ({
-  _dirname: 'test',
   config: {
     secret: 'test',
   },
